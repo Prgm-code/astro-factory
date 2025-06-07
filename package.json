@@ -1,0 +1,16 @@
+{
+  "name": "astro-factory",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/node": "^9.2.2",
+    "@astrojs/vercel": "^8.1.5",
+    "astro": "^5.9.0"
+  }
+}

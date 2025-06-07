@@ -1,0 +1,809 @@
+---
+import CategoryCard from './CategoryCard.astro';
+import ProductsModal from './ProductsModal.astro';
+
+const data = await fetch('https://api.pcfactory.cl/api-dex-catalog/v1/catalog/category/PCF/menu').then((response) => response.json());
+---
+
+<div class="categories-banner" transition:name="main-content">
+  <div class="banner-header" transition:name="header">
+    <h2 class="app-title">PC Refactoring</h2>
+    <div class="search-container">
+      <input 
+        type="text" 
+        id="category-search" 
+        placeholder="Buscar categorías..." 
+        class="search-input"
+        transition:name="search-input"
+      />
+      <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+      </svg>
+    </div>
+  </div>
+  
+  <div class="categories-grid" id="categories-grid" transition:name="categories-grid">
+    {data.map((category: any, index: number) => (
+      <div transition:name={`category-${category.id}`}>
+        <CategoryCard category={category} />
+      </div>
+    ))}
+  </div>
+</div>
+
+<!-- Modal de Productos -->
+<ProductsModal />
+
+<style>
+:root {
+  --primary-bg: #0f1419;
+  --secondary-bg: #1a202c;
+  --card-bg: #2d3748;
+  --hover-bg: #4a5568;
+  --text-primary: #f7fafc;
+  --text-secondary: #a0aec0;
+  --text-muted: #718096;
+  --accent: #667eea;
+  --accent-hover: #764ba2;
+  --border: #2d3748;
+  --border-hover: #4a5568;
+  --success: #48bb78;
+  --warning: #ed8936;
+  --danger: #f56565;
+  --shadow: rgba(0, 0, 0, 0.4);
+  --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--primary-bg);
+  color: var(--text-primary);
+  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+}
+
+.categories-banner {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+  background: var(--primary-bg);
+}
+
+.banner-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+/* Título PC Refactoring con efecto discreto */
+.app-title {
+  font-size: 4rem;
+  font-weight: 900;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, #d81b60 0%, #8e24aa 25%, #5e35b1 50%, #3949ab 75%, #d81b60 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientShift 6s ease-in-out infinite, textGlow 4s ease-in-out infinite alternate;
+  letter-spacing: 0.1em;
+  position: relative;
+  display: inline-block;
+}
+
+.app-title::before {
+  content: 'PC Refactoring';
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: linear-gradient(135deg, #d81b60 0%, #8e24aa 25%, #5e35b1 50%, #3949ab 75%, #d81b60 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientShift 6s ease-in-out infinite reverse;
+  filter: blur(1px);
+  opacity: 0.6;
+  z-index: -1;
+}
+
+.app-title::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150%;
+  height: 200%;
+  background: radial-gradient(ellipse, rgba(216, 27, 96, 0.3) 0%, rgba(142, 36, 170, 0.2) 20%, rgba(94, 53, 177, 0.15) 40%, rgba(57, 73, 171, 0.1) 60%, transparent 80%);
+  transform: translate(-50%, -50%);
+  animation: pulseGlow 4s ease-in-out infinite;
+  z-index: -2;
+  border-radius: 50%;
+  filter: blur(10px);
+}
+
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes textGlow {
+  0% {
+    filter: drop-shadow(0 0 8px rgba(216, 27, 96, 0.6)) drop-shadow(0 0 16px rgba(142, 36, 170, 0.4)) drop-shadow(0 0 24px rgba(94, 53, 177, 0.3));
+  }
+  100% {
+    filter: drop-shadow(0 0 12px rgba(216, 27, 96, 0.8)) drop-shadow(0 0 24px rgba(142, 36, 170, 0.6)) drop-shadow(0 0 36px rgba(94, 53, 177, 0.4)) drop-shadow(0 0 48px rgba(57, 73, 171, 0.3));
+  }
+}
+
+.banner-header h2 {
+  color: var(--text-primary);
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 4px 8px var(--shadow);
+  letter-spacing: -0.02em;
+}
+
+.search-container {
+  position: relative;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.search-input {
+  width: 100%;
+  padding: 1.25rem 1.25rem 1.25rem 3.5rem;
+  border: 2px solid var(--border);
+  border-radius: 30px;
+  font-size: 1.1rem;
+  outline: none;
+  transition: all 0.3s ease;
+  background: var(--card-bg);
+  color: var(--text-primary);
+  box-shadow: 0 8px 25px var(--shadow);
+  backdrop-filter: blur(10px);
+}
+
+.search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.search-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2), 0 8px 25px var(--shadow);
+  transform: translateY(-2px);
+}
+
+.search-icon {
+  position: absolute;
+  left: 1.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--text-muted);
+  transition: color 0.3s ease;
+}
+
+.search-input:focus + .search-icon {
+  color: var(--accent);
+}
+
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.hidden {
+  display: none !important;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 8px 25px var(--shadow);
+  }
+  50% {
+    box-shadow: 0 8px 25px var(--shadow), 0 0 20px rgba(102, 126, 234, 0.3);
+  }
+}
+
+@media (max-width: 1200px) {
+  .categories-grid {
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .categories-banner {
+    padding: 2rem 1rem;
+  }
+  
+  .categories-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .banner-header h2 {
+    font-size: 2.5rem;
+  }
+  
+  .app-title {
+    font-size: 3rem;
+  }
+  
+  .search-input {
+    font-size: 1rem;
+    padding: 1rem 1rem 1rem 3rem;
+  }
+  
+  .search-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    left: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .banner-header h2 {
+    font-size: 2rem;
+  }
+  
+  .app-title {
+    font-size: 2.5rem;
+    letter-spacing: 0.05em;
+  }
+  
+  .search-container {
+    max-width: 100%;
+  }
+}
+</style>
+
+<script is:inline>
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('DOMContentLoaded fired');
+  
+  // Usar setTimeout para asegurar que los elementos estén completamente renderizados
+  setTimeout(() => {
+    const searchInput = document.getElementById('category-search');
+    const categoriesGrid = document.getElementById('categories-grid');
+    const categoryCards = document.querySelectorAll('#categories-grid > div');
+    const expandButtons = document.querySelectorAll('.expand-btn');
+    
+    console.log('Elements found:', {
+      searchInput: !!searchInput,
+      categoriesGrid: !!categoriesGrid,
+      categoryCards: categoryCards.length,
+      expandButtons: expandButtons.length
+    });
+    
+    if (!searchInput || !categoriesGrid || categoryCards.length === 0) {
+      console.error('Required elements not found for search functionality');
+      return;
+    }
+  
+    // Obtener datos de categorías del DOM
+  const categories = Array.from(categoryCards).map(card => {
+    try {
+      const categoryData = JSON.parse(card.dataset.category || '{}');
+      return categoryData;
+    } catch (error) {
+      console.error('Error parsing category data:', error);
+      return null;
+    }
+  }).filter(Boolean);
+
+  // Función para recopilar IDs de categorías
+  function collectCategoryIds(mainCategoryId, allCategories) {
+    // Validar entrada
+    if (!mainCategoryId || isNaN(mainCategoryId)) {
+      console.error('Invalid mainCategoryId:', mainCategoryId);
+      return [];
+    }
+    
+    if (!allCategories || !Array.isArray(allCategories)) {
+      console.error('Invalid allCategories:', allCategories);
+      return [mainCategoryId];
+    }
+    
+    const categoryIds = [parseInt(mainCategoryId)];
+    
+    allCategories.forEach((category) => {
+      if (category.id === parseInt(mainCategoryId) && category.childCategories) {
+        category.childCategories.forEach((subCategory) => {
+          categoryIds.push(subCategory.id);
+          if (subCategory.childCategories && subCategory.childCategories.length > 0) {
+            subCategory.childCategories.forEach((subSubCategory) => {
+              categoryIds.push(subSubCategory.id);
+            });
+          }
+        });
+      }
+    });
+    
+    return [...new Set(categoryIds)];
+  }
+
+    // Variables del modal
+    const modal = document.getElementById('products-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const closeModalBtn = document.getElementById('close-modal');
+    const loadingSpinner = document.getElementById('loading-spinner');
+    const productsGrid = document.getElementById('products-grid');
+    const paginationControls = document.getElementById('pagination-controls');
+    const productsFilters = document.getElementById('products-filters');
+    const brandFilter = document.getElementById('brand-filter');
+    const sortFilter = document.getElementById('sort-filter');
+    const productsCount = document.getElementById('products-count');
+
+    let currentPage = 0;
+    let totalPages = 0;
+    let currentCategoryIds = [];
+    let currentCategoryName = '';
+    let allProducts = [];
+    let filteredProducts = [];
+    let uniqueBrands = [];
+
+  // Función global para abrir modal de productos
+  window.openProductsModal = function(categoryId, categoryName) {
+    try {
+      const numericCategoryId = parseInt(categoryId);
+      
+      // Validar que categoryId es válido
+      if (!numericCategoryId || isNaN(numericCategoryId)) {
+        console.error('Invalid categoryId:', categoryId);
+        alert('Error: ID de categoría inválido');
+        return;
+      }
+      
+      // Validar que categories array está disponible
+      if (!categories || categories.length === 0) {
+        console.error('Categories data not available');
+        alert('Error: Datos de categorías no disponibles');
+        return;
+      }
+      
+      const categoryIds = collectCategoryIds(numericCategoryId, categories);
+      
+      // Validar que se obtuvieron IDs válidos
+      if (!categoryIds || categoryIds.length === 0) {
+        console.error('No valid category IDs collected');
+        alert('Error: No se pudieron obtener IDs de categorías válidos');
+        return;
+      }
+      
+      currentCategoryIds = categoryIds;
+      currentCategoryName = categoryName;
+      currentPage = 0;
+      
+      if (modalTitle) modalTitle.textContent = `${categoryName} - Productos Disponibles`;
+      if (modal) modal.classList.add('show');
+      
+      loadProducts(categoryIds, 0);
+      
+    } catch (error) {
+      console.error('Error in openProductsModal:', error);
+      alert('Error inesperado: ' + error.message);
+    }
+  };
+
+  // Función para cargar productos
+  async function loadProducts(categoryIds, page = 0) {
+    if (!loadingSpinner || !productsGrid || !paginationControls) return;
+
+    loadingSpinner.style.display = 'flex';
+    productsGrid.style.display = 'none';
+    paginationControls.style.display = 'none';
+
+    try {
+      // Validar entrada
+      if (!categoryIds) {
+        throw new Error('categoryIds is null or undefined');
+      }
+      
+      const idsArray = Array.isArray(categoryIds) ? categoryIds : [categoryIds];
+      
+      // Filtrar IDs válidos y convertir a números
+      const validIds = idsArray
+        .map(id => parseInt(id))
+        .filter(id => !isNaN(id) && id > 0);
+      
+      if (validIds.length === 0) {
+        throw new Error('No valid category IDs found after filtering');
+      }
+      
+      const categoriesParam = validIds.join(',');
+      
+      // Usar POST para enviar parámetros en el body
+      const apiUrl = `/api/products-post`;
+      const requestBody = {
+        page: page,
+        size: 24,
+        categorias: categoriesParam
+      };
+      
+      const requestBodyString = JSON.stringify(requestBody);
+      
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Length': requestBodyString.length.toString()
+        },
+        body: requestBodyString
+      });
+      
+      if (!response.ok) throw new Error('Error al cargar productos');
+      
+      const data = await response.json();
+      
+      loadingSpinner.style.display = 'none';
+      
+      // Manejo para API de productos
+      productsGrid.style.display = 'grid';
+      paginationControls.style.display = 'flex';
+      if (productsFilters) productsFilters.style.display = 'block';
+
+      allProducts = data.content.items;
+      uniqueBrands = [...new Set(allProducts.map(product => product.marca))].sort();
+      
+      updateBrandFilter();
+      updateProductsCount(data.content.pageable.totalElements);
+      applyFilters();
+      renderPagination(data.content.pageable);
+      
+    } catch (error) {
+      console.error('Error loading products:', error);
+      loadingSpinner.style.display = 'none';
+      if (productsGrid) {
+        productsGrid.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: var(--text-secondary);">
+            <h3 style="color: var(--danger); margin-bottom: 1rem; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);">Error al cargar productos</h3>
+            <p style="color: var(--text-secondary);">No se pudieron cargar los productos en este momento.</p>
+            <p style="font-size: 0.875rem; margin-top: 0.5rem; color: var(--text-muted);">Verifica tu conexión a internet e inténtalo de nuevo.</p>
+            <button onclick="window.location.reload()" 
+                    style="margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--accent); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: 600; transition: all 0.2s ease; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);"
+                    onmouseover="this.style.background='var(--accent-hover)'; this.style.transform='translateY(-2px)'"
+                    onmouseout="this.style.background='var(--accent)'; this.style.transform='translateY(0)'">
+              🔄 Reintentar
+            </button>
+          </div>
+        `;
+        productsGrid.style.display = 'grid';
+      }
+    }
+  }
+
+  // Función para renderizar productos
+  function renderProducts(products) {
+    if (!productsGrid) return;
+
+    if (products.length === 0) {
+      productsGrid.innerHTML = `
+        <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: var(--text-secondary);">
+          <p>No se encontraron productos en esta categoría.</p>
+        </div>
+      `;
+      return;
+    }
+
+    productsGrid.innerHTML = products.map(product => `
+      <div class="product-card">
+        <div class="product-image">
+          <img 
+            src="https://assets.pcfactory.cl${product.thumbnail}" 
+            alt="${product.nombre}"
+            loading="lazy"
+          />
+          ${product.precio.promocion ? '<div class="product-badge">OFERTA</div>' : ''}
+          ${product.outlet ? '<div class="product-badge outlet">OUTLET</div>' : ''}
+        </div>
+        
+        <div class="product-info">
+          <div class="product-brand">${product.marca}</div>
+          <h3 class="product-name">${product.nombre}</h3>
+          
+          <div class="product-pricing">
+            <div class="price-current">$${formatPrice(product.precio.efectivo)}</div>
+            ${product.precio.referencia > 0 && product.precio.referencia !== product.precio.normal ? 
+              `<div class="price-original">$${formatPrice(product.precio.referencia)}</div>` : ''
+            }
+          </div>
+          
+          <div class="product-stock">Stock: ${product.stock}</div>
+          
+          <div class="product-actions">
+            <button class="btn-primary" onclick="viewProduct('${product.slug}')" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; padding: 1rem 1.5rem; border-radius: 12px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4); text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.5px;">
+              Ver Producto
+            </button>
+            <button class="btn-secondary" title="Agregar a favoritos">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Función para renderizar paginación
+  function renderPagination(pageable) {
+    if (!paginationControls) return;
+
+    currentPage = pageable.pageNumber;
+    totalPages = pageable.totalPages;
+
+    const totalElements = pageable.totalElements;
+    const pageSize = pageable.pageSize;
+    const startItem = currentPage * pageSize + 1;
+    const endItem = Math.min((currentPage + 1) * pageSize, totalElements);
+
+    paginationControls.innerHTML = `
+      <button 
+        class="pagination-btn" 
+        ${currentPage === 0 ? 'disabled' : ''}
+        onclick="changePage(${currentPage - 1})"
+      >
+        Anterior
+      </button>
+      
+      <div class="pagination-info">
+        ${startItem}-${endItem} de ${totalElements} productos
+      </div>
+      
+      <button 
+        class="pagination-btn" 
+        ${currentPage >= totalPages - 1 ? 'disabled' : ''}
+        onclick="changePage(${currentPage + 1})"
+      >
+        Siguiente
+      </button>
+    `;
+  }
+
+  // Función para formatear precios
+  function formatPrice(price) {
+    return new Intl.NumberFormat('es-CL').format(price);
+  }
+
+  // Función para actualizar el filtro de marcas
+  function updateBrandFilter() {
+    if (!brandFilter) return;
+    
+    brandFilter.innerHTML = '<option value="">Todas las marcas</option>';
+    
+    uniqueBrands.forEach(brand => {
+      const option = document.createElement('option');
+      option.value = brand;
+      option.textContent = brand;
+      brandFilter.appendChild(option);
+    });
+  }
+
+    // Función para actualizar el contador de productos
+    function updateProductsCount(totalElements) {
+      if (productsCount) {
+        productsCount.textContent = `${totalElements} productos encontrados`;
+      }
+    }
+
+    // Función para aplicar filtros
+    function applyFilters() {
+      filteredProducts = [...allProducts];
+      
+      const selectedBrand = brandFilter?.value;
+      if (selectedBrand) {
+        filteredProducts = filteredProducts.filter(product => product.marca === selectedBrand);
+      }
+      
+      const sortValue = sortFilter?.value || 'relevance';
+      switch (sortValue) {
+        case 'price-asc':
+          filteredProducts.sort((a, b) => a.precio.efectivo - b.precio.efectivo);
+          break;
+        case 'price-desc':
+          filteredProducts.sort((a, b) => b.precio.efectivo - a.precio.efectivo);
+          break;
+        case 'name':
+          filteredProducts.sort((a, b) => a.nombre.localeCompare(b.nombre));
+          break;
+        default:
+          break;
+      }
+      
+      renderProducts(filteredProducts);
+      
+      if (productsCount) {
+        productsCount.textContent = `${filteredProducts.length} productos encontrados`;
+      }
+    }
+
+    // Funciones globales
+    window.changePage = function(newPage) {
+      if (newPage >= 0 && newPage < totalPages) {
+        loadProducts(currentCategoryIds, newPage);
+      }
+    };
+
+    window.viewProduct = function(slug) {
+      window.open(`https://www.pcfactory.cl/producto/${slug}`, '_blank');
+    };
+
+    // Función de búsqueda mejorada
+    function performSearch(searchTerm) {
+      const normalizedSearchTerm = searchTerm.toLowerCase().trim();
+      
+      categoryCards.forEach((cardWrapper) => {
+        try {
+          // El data-category está en el primer hijo (.category-card)
+          const categoryCard = cardWrapper.querySelector('.category-card');
+          if (!categoryCard) return;
+          
+          const categoryData = JSON.parse(categoryCard.dataset.category || '{}');
+          
+          // Buscar en nombre principal
+          const categoryName = (categoryData.nombre || '').toLowerCase();
+          
+          // Buscar en subcategorías
+          const subcategoryNames = categoryData.childCategories?.map((sub) => 
+            (sub.nombre || '').toLowerCase()
+          ).join(' ') || '';
+          
+          // Buscar en sub-subcategorías
+          let subSubcategoryNames = '';
+          if (categoryData.childCategories) {
+            categoryData.childCategories.forEach(sub => {
+              if (sub.childCategories) {
+                sub.childCategories.forEach(subsub => {
+                  subSubcategoryNames += (subsub.nombre || '').toLowerCase() + ' ';
+                });
+              }
+            });
+          }
+          
+          // Combinar todos los textos de búsqueda
+          const searchableText = `${categoryName} ${subcategoryNames} ${subSubcategoryNames}`;
+          
+          // Mostrar/ocultar según coincidencia
+          if (normalizedSearchTerm === '' || searchableText.includes(normalizedSearchTerm)) {
+            cardWrapper.classList.remove('hidden');
+            cardWrapper.style.animation = 'fadeInUp 0.3s ease-out';
+          } else {
+            cardWrapper.classList.add('hidden');
+          }
+        } catch (error) {
+          console.warn('Error parsing category data for search:', error);
+          // En caso de error, mostrar la card si no hay término de búsqueda
+          if (normalizedSearchTerm === '') {
+            cardWrapper.classList.remove('hidden');
+          }
+        }
+      });
+      
+      // Actualizar contador de resultados
+      const visibleCards = document.querySelectorAll('#categories-grid > div:not(.hidden)');
+      console.log(`Búsqueda: "${searchTerm}" - ${visibleCards.length} categorías encontradas`);
+    }
+
+    // Event listener para búsqueda con debounce
+    let searchTimeout;
+    if (searchInput) {
+      searchInput.addEventListener('input', function(e) {
+        const searchTerm = e.target.value;
+        
+        // Limpiar timeout anterior
+        clearTimeout(searchTimeout);
+        
+        // Ejecutar búsqueda después de 300ms de inactividad
+        searchTimeout = setTimeout(() => {
+          performSearch(searchTerm);
+        }, 300);
+      });
+
+      // También ejecutar búsqueda en tiempo real para mejor UX
+      searchInput.addEventListener('keyup', function(e) {
+        if (e.key === 'Enter' || e.key === 'Escape') {
+          clearTimeout(searchTimeout);
+          if (e.key === 'Escape') {
+            e.target.value = '';
+          }
+          performSearch(e.target.value);
+        }
+      });
+    }
+
+    // Función para expandir/contraer categorías con scroll automático
+    expandButtons.forEach((button) => {
+      button.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const categoryId = e.currentTarget?.dataset?.categoryId;
+        const subcategories = document.getElementById(`subcategories-${categoryId}`);
+        const categoryCard = e.currentTarget?.closest('.category-card');
+        
+        if (subcategories && categoryId && e.currentTarget) {
+          const wasExpanded = subcategories.classList.contains('expanded');
+          subcategories.classList.toggle('expanded');
+          e.currentTarget.classList.toggle('expanded');
+          
+          // Scroll automático cuando se expande el dropdown
+          if (!wasExpanded && categoryCard) {
+            // Esperar a que la animación termine antes de hacer scroll
+            setTimeout(() => {
+              const cardRect = categoryCard.getBoundingClientRect();
+              const cardTop = cardRect.top + window.pageYOffset;
+              const headerHeight = 120; // Altura aproximada del header
+              const scrollTarget = cardTop - headerHeight;
+              
+              window.scrollTo({
+                top: scrollTarget,
+                behavior: 'smooth'
+              });
+            }, 200); // Esperar 200ms para que la animación de expansión termine
+          }
+        }
+      });
+    });
+
+    // Hacer clickeable toda la categoría principal con scroll automático
+    document.querySelectorAll('.category-main').forEach((main) => {
+      main.addEventListener('click', function(e) {
+        if (e.target && e.target.closest && e.target.closest('.expand-btn')) return;
+        
+        const expandBtn = e.currentTarget && e.currentTarget.querySelector('.expand-btn');
+        if (expandBtn) {
+          expandBtn.click();
+        }
+      });
+    });
+
+    // Cerrar modal
+    closeModalBtn?.addEventListener('click', function() {
+      if (modal) modal.classList.remove('show');
+    });
+
+    modal?.addEventListener('click', function(e) {
+      if (e.target === modal) {
+        modal.classList.remove('show');
+      }
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && modal?.classList.contains('show')) {
+        modal.classList.remove('show');
+      }
+    });
+
+    // Event listeners para filtros
+    brandFilter?.addEventListener('change', applyFilters);
+    sortFilter?.addEventListener('change', applyFilters);
+  
+    // Componente inicializado correctamente
+    console.log('Categories component initialized with enhanced search functionality');
+  }, 100); // Timeout de 100ms para asegurar que los elementos estén renderizados
+});
+</script>
